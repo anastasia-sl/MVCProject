@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 using MVCProject.Models;
 
@@ -6,58 +7,59 @@ namespace MVCProject.Controllers
 {
     public class PatientsController : Controller
     {
-        // GET: Patients
+        private static List<Patient> _patients = new List<Patient>
+        {
+            new Patient { Id = 1, Name = "Bob Bdgk" },
+            new Patient { Id = 2, Name = "Kate Nldmgl" }
+        };
+
         public ActionResult Index()
         {
-            List<Patient> patients = new List<Patient>
-            {
-                new Patient { Id = 1, Name = "John" },
-                new Patient { Id = 2, Name = "Kate" }
-            };
-
-            return View(patients);
+            return View(_patients);
         }
 
-        // GET: Patients/Create
+        // Добавление пациента
+        [HttpGet]
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Patients/Create
         [HttpPost]
         public ActionResult Create(Patient patient)
         {
+            patient.Id = _patients.Any() ? _patients.Max(p => p.Id) + 1 : 1;
+            _patients.Add(patient);
             return RedirectToAction("Index");
         }
 
-        // GET: Patients/Edit/1
+        // Редактирование пациента
+        [HttpGet]
         public ActionResult Edit(int id)
         {
-            Patient patient = new Patient { Id = id, Name = "John Doe" };
-
+            var patient = _patients.FirstOrDefault(p => p.Id == id);
+            if (patient == null)
+                return HttpNotFound();
             return View(patient);
         }
 
-        // POST: Patients/Edit/1
         [HttpPost]
-        public ActionResult Edit(int id, Patient patient)
+        public ActionResult Edit(Patient patient)
         {
+            var existingPatient = _patients.FirstOrDefault(p => p.Id == patient.Id);
+            if (existingPatient == null)
+                return HttpNotFound();
+            existingPatient.Name = patient.Name;
             return RedirectToAction("Index");
         }
 
-        // GET: Patients/Delete/1
+        // Удаление пациента
         public ActionResult Delete(int id)
         {
-            Patient patient = new Patient { Id = id, Name = "John Doe" };
-
-            return View(patient);
-        }
-
-        // POST: Patients/Delete/1
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
+            var patient = _patients.FirstOrDefault(p => p.Id == id);
+            if (patient == null)
+                return HttpNotFound();
+            _patients.Remove(patient);
             return RedirectToAction("Index");
         }
     }

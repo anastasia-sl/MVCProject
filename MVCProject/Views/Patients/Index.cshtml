@@ -20,6 +20,10 @@
             <tr>
                 <td>@patient.Name</td>
             </tr>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = patient.Id }) |
+                @Html.ActionLink("Delete", "Delete", new { id = patient.Id })
+            </td>
         }
     </tbody>
 </table>
