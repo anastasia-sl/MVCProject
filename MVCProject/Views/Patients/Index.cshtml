@@ -7,24 +7,30 @@
 
 <h2>List of Patients</h2>
 
+<p>
+    @Html.ActionLink("Add Patient", "Create")
+</p>
+
 <table class="table">
     <thead>
-        <tr>
-            <th>Name</th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th></th>
+    </tr>
     </thead>
     <tbody>
-        @foreach (var patient in Model)
-        {
-            <tr>
-                <td>@patient.Name</td>
-            </tr>
+    @foreach (var patient in Model)
+    {
+        <tr>
+            <td>@patient.Id</td>
+            <td>@patient.Name</td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new { id = patient.Id }) |
                 @Html.ActionLink("Delete", "Delete", new { id = patient.Id })
             </td>
-        }
+        </tr>
+    }
     </tbody>
 </table>
 
