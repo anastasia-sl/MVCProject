@@ -10,7 +10,8 @@ namespace MVCProject.Controllers
         private static List<Patient> _patients = new List<Patient>
         {
             new Patient { Id = 1, Name = "Bob Bdgk" },
-            new Patient { Id = 2, Name = "Kate Nldmgl" }
+            new Patient { Id = 2, Name = "Bob Thfhf" },
+            new Patient { Id = 3, Name = "Kate Nldmgl" }
         };
 
         public ActionResult Index()
@@ -61,6 +62,13 @@ namespace MVCProject.Controllers
                 return HttpNotFound();
             _patients.Remove(patient);
             return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public ActionResult Filter(string searchString)
+        {
+            var filteredPatients = _patients.Where(p => p.Name.Contains(searchString)).ToList();
+            return View("Index", filteredPatients);
         }
     }
 }

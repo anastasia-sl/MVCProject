@@ -7,30 +7,39 @@
 
 <h2>List of Patients</h2>
 
+@using (Html.BeginForm("Filter", "Patients", FormMethod.Post))
+{
+    <div class="form-group">
+        @Html.Label("Search by Name:")
+        @Html.TextBox("searchString", null, new { @class = "form-control" })
+    </div>
+    <button type="submit" class="btn btn-primary">Search</button>
+}
+
 <p>
     @Html.ActionLink("Add Patient", "Create")
 </p>
 
 <table class="table">
     <thead>
-    <tr>
-        <th>Id</th>
-        <th>Name</th>
-        <th></th>
-    </tr>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th></th>
+        </tr>
     </thead>
     <tbody>
-    @foreach (var patient in Model)
-    {
-        <tr>
-            <td>@patient.Id</td>
-            <td>@patient.Name</td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id = patient.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id = patient.Id })
-            </td>
-        </tr>
-    }
+        @foreach (var patient in Model)
+        {
+            <tr>
+                <td>@patient.Id</td>
+                <td>@patient.Name</td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = patient.Id }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = patient.Id })
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 
