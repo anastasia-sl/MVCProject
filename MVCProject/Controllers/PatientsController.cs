@@ -1,74 +1,89 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿//using System.Configuration;
+//using System.Linq;
 using System.Web.Mvc;
-using MVCProject.Models;
+//using MVCProject.Models;
+//using System.Data.Entity;
 
 namespace MVCProject.Controllers
 {
     public class PatientsController : Controller
     {
-        private static List<Patient> _patients = new List<Patient>
-        {
-            new Patient { Id = 1, Name = "Bob Bdgk" },
-            new Patient { Id = 2, Name = "Bob Thfhf" },
-            new Patient { Id = 3, Name = "Kate Nldmgl" }
-        };
+        //private PatientContext _context = new PatientContext(ConfigurationManager.ConnectionStrings[0].ConnectionString);
 
-        public ActionResult Index()
+        // GET: Patients
+        public ActionResult View()
         {
-            return View(_patients);
+            //var patients = _context.Patients.ToList();
+            PatientsRepository repository = new PatientsRepository();
+            return View(repository.GetPatients());
         }
 
-        // Добавление пациента
-        [HttpGet]
-        public ActionResult Create()
-        {
-            return View();
-        }
+        //        // Добавление пациента
+        //        [HttpGet]
+        //        public ActionResult Create()
+        //        {
+        //            return View();
+        //        }
 
-        [HttpPost]
-        public ActionResult Create(Patient patient)
-        {
-            patient.Id = _patients.Any() ? _patients.Max(p => p.Id) + 1 : 1;
-            _patients.Add(patient);
-            return RedirectToAction("Index");
-        }
+        //        [HttpPost]
+        //        public ActionResult Create(Patient patient)
+        //        {
+        //            if (ModelState.IsValid)
+        //            {
+        //                _context.Patients.Add(patient);
+        //                _context.SaveChanges();
+        //                return RedirectToAction("Index");
+        //            }
+        //            return View(patient);
+        //        }
 
-        // Редактирование пациента
-        [HttpGet]
-        public ActionResult Edit(int id)
-        {
-            var patient = _patients.FirstOrDefault(p => p.Id == id);
-            if (patient == null)
-                return HttpNotFound();
-            return View(patient);
-        }
+        //        // Редактирование пациента
+        //        [HttpGet]
+        //        public ActionResult Edit(int id)
+        //        {
+        //            var patient = _context.Patients.Find(id);
+        //            if (patient == null)
+        //                return HttpNotFound();
+        //            return View(patient);
+        //        }
 
-        [HttpPost]
-        public ActionResult Edit(Patient patient)
-        {
-            var existingPatient = _patients.FirstOrDefault(p => p.Id == patient.Id);
-            if (existingPatient == null)
-                return HttpNotFound();
-            existingPatient.Name = patient.Name;
-            return RedirectToAction("Index");
-        }
+        //        [HttpPost]
+        //        public ActionResult Edit(Patient patient)
+        //        {
+        //            if (ModelState.IsValid)
+        //            {
+        //                _context.Entry(patient).State = EntityState.Modified;
+        //                _context.SaveChanges();
+        //                return RedirectToAction("Index");
+        //            }
+        //            return View(patient);
+        //        }
 
-        // Удаление пациента
-        public ActionResult Delete(int id)
-        {
-            var patient = _patients.FirstOrDefault(p => p.Id == id);
-            if (patient == null)
-                return HttpNotFound();
-            _patients.Remove(patient);
-            return RedirectToAction("Index");
-        }
+        //        // Удаление пациента
+        //        public ActionResult Delete(int id)
+        //        {
+        //            var patient = _context.Patients.Find(id);
+        //            if (patient == null)
+        //                return HttpNotFound();
+        //            _context.Patients.Remove(patient);
+        //            _context.SaveChanges();
+        //            return RedirectToAction("Index");
+        //        }
 
-        [HttpPost]
-        public ActionResult Filter(string searchString)
-        {
-            var filteredPatients = _patients.Where(p => p.Name.Contains(searchString)).ToList();
-            return View("Index", filteredPatients);
-        }
+        //        [HttpPost]
+        //        public ActionResult Filter(string searchString)
+        //        {
+        //            var filteredPatients = _context.Patients.Where(p => p.Name.Contains(searchString)).ToList();
+        //            return View("Index", filteredPatients);
+        //        }
+
+        //        protected override void Dispose(bool disposing)
+        //        {
+        //            if (disposing)
+        //            {
+        //                _context.Dispose();
+        //            }
+        //            base.Dispose(disposing);
+        //        }
     }
 }

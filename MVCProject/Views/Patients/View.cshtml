@@ -1,0 +1,16 @@
+﻿@using MVCProject.Models
+@model IEnumerable<MVCProject.Models.Patient>
+@{
+    ViewBag.Title = "View";
+    Layout = null;
+}
+
+<h2>View</h2>
+
+<div>
+    @foreach (Patient patient in Model)
+    {
+        <div>@patient.Id , @patient.Name</div>
+    }
+</div>
+

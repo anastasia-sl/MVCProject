@@ -1,4 +1,4 @@
-﻿@model List<MVCProject.Models.Patient>
+﻿@*@model List<MVCProject.Models.Patient>
 
 @{
     ViewBag.Title = "Index";
@@ -22,24 +22,23 @@
 
 <table class="table">
     <thead>
-        <tr>
-            <th>Id</th>
-            <th>Name</th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th></th>
+    </tr>
     </thead>
     <tbody>
-        @foreach (var patient in Model)
-        {
-            <tr>
-                <td>@patient.Id</td>
-                <td>@patient.Name</td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = patient.Id }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = patient.Id })
-                </td>
-            </tr>
-        }
+    @foreach (var patient in Model)
+    {
+        <tr>
+            <td>@patient.Id</td>
+            <td>@patient.Name</td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = patient.Id }) |
+                @Html.ActionLink("Delete", "Delete", new { id = patient.Id })
+            </td>
+        </tr>
+    }
     </tbody>
-</table>
-
+</table>*@
