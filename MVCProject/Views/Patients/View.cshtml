@@ -20,16 +20,25 @@
     <button type="submit" class="btn btn-primary">Search</button>
 }
 
-@foreach (Patient patient in Model)
-{
-    <tr>
-        <td>
-
-        <td>@patient.Id</td>
-        <td>@patient.Name</td>
-        </td>
-        <td>
-            @Html.ActionLink("Delete", "Delete", new { id = patient.Id })
-        </td>
-    </tr>
-}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Patient patient in Model)
+        {
+            <tr>
+                <td>@patient.Id</td>
+                <td>@patient.Name</td>
+                <td>
+                    @Html.ActionLink("Delete", "Delete", new { id = patient.Id }) |
+                    @Html.ActionLink("Edit", "Edit", new { id = patient.Id })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

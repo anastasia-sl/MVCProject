@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Linq;
 using System.Web;
 using MVCProject.Models;
+using System.Data.Entity;
 
 namespace MVCProject
 {
@@ -21,10 +22,10 @@ namespace MVCProject
             return context.Patients;
         }
 
-        //public Patient GetPatientById(int id)
-        //{
-        //    return context.Patients.FirstOrDefault(p => p.Id == id);
-        //}
+        public Patient GetPatientById(int id)
+        {
+            return context.Patients.FirstOrDefault(p => p.Id == id);
+        }
 
         public void AddPatient(Patient patient)
         {
@@ -47,5 +48,10 @@ namespace MVCProject
             return context.Patients.Where(p => p.Name.Contains(name)).ToList();
         }
 
+        public void UpdatePatient(Patient patient)
+        {
+            context.Entry(patient).State = EntityState.Modified;
+            context.SaveChanges();
+        }
     }
 }

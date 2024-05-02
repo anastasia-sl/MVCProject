@@ -51,6 +51,34 @@ namespace MVCProject.Controllers
             return View("View", filteredPatients);
         }
 
+        // Edit
+        public ActionResult Edit(int id)
+        {
+            PatientsRepository repository = new PatientsRepository();
+
+            var patient = repository.GetPatientById(id);
+            if (patient == null)
+            {
+                return HttpNotFound();
+            }
+            return View(patient);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(Patient patient)
+        {
+            PatientsRepository repository = new PatientsRepository();
+
+            if (ModelState.IsValid)
+            {
+                repository.UpdatePatient(patient);
+                return RedirectToAction("View");
+            }
+            return View(patient);
+        }
+
+
 
         //        // Добавление пациента
         //        [HttpGet]
