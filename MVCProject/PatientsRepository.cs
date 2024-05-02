@@ -21,9 +21,31 @@ namespace MVCProject
             return context.Patients;
         }
 
-        public Patient GetPatientById(int id)
+        //public Patient GetPatientById(int id)
+        //{
+        //    return context.Patients.FirstOrDefault(p => p.Id == id);
+        //}
+
+        public void AddPatient(Patient patient)
         {
-            return context.Patients.FirstOrDefault(p => p.Id == id);
+            context.Patients.Add(patient);
+            context.SaveChanges();
         }
+
+        public void RemovePatient(int id)
+        {
+            var patientToRemove = context.Patients.FirstOrDefault(p => p.Id == id);
+            if (patientToRemove != null)
+            {
+                context.Patients.Remove(patientToRemove);
+                context.SaveChanges();
+            }
+        }
+
+        public IEnumerable<Patient> GetPatientsByName(string name)
+        {
+            return context.Patients.Where(p => p.Name.Contains(name)).ToList();
+        }
+
     }
 }

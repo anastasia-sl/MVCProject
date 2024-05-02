@@ -1,5 +1,6 @@
 ﻿//using System.Configuration;
-//using System.Linq;
+using System.Linq;
+using MVCProject.Models;
 using System.Web.Mvc;
 //using MVCProject.Models;
 //using System.Data.Entity;
@@ -8,15 +9,48 @@ namespace MVCProject.Controllers
 {
     public class PatientsController : Controller
     {
-        //private PatientContext _context = new PatientContext(ConfigurationManager.ConnectionStrings[0].ConnectionString);
-
         // GET: Patients
         public ActionResult View()
         {
-            //var patients = _context.Patients.ToList();
             PatientsRepository repository = new PatientsRepository();
             return View(repository.GetPatients());
         }
+
+        //ADD
+        public ActionResult Add()
+        {
+            return View(new Patient());
+        }
+
+        [HttpPost]
+        public ActionResult Add(Patient patient)
+        {
+            if (ModelState.IsValid)
+            {
+                PatientsRepository repository = new PatientsRepository();
+                repository.AddPatient(patient);
+                return RedirectToAction("View");
+            }
+            return View(patient);
+        }
+
+        // GET: Delete
+        public ActionResult Delete(int id)
+        {
+            PatientsRepository repository = new PatientsRepository();
+            repository.RemovePatient(id);
+            return RedirectToAction("View");
+        }
+
+        //Filter
+        public ActionResult Filter(string searchString)
+        {
+            PatientsRepository repository = new PatientsRepository();
+
+            var filteredPatients = repository.GetPatientsByName(searchString);
+            return View("View", filteredPatients);
+        }
+
 
         //        // Добавление пациента
         //        [HttpGet]

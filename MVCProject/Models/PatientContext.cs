@@ -12,9 +12,6 @@ namespace MVCProject.Models
         {
             Database.Connection.ConnectionString = connectionString;
         }
-        //public PatientContext() : base("PatientsDatabase")
-        //{
-        //}
 
         public DbSet<Patient> Patients { get; set; }
     }

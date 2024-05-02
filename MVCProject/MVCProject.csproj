@@ -595,6 +595,7 @@
     <Content Include="Views\Patients\Create.cshtml" />
     <Content Include="Views\Patients\Edit.cshtml" />
     <Content Include="Views\Patients\View.cshtml" />
+    <Content Include="Views\Patients\Add.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
