@@ -1,151 +1,209 @@
-﻿//using System.Configuration;
-using System.Linq;
-using MVCProject.Models;
-using System.Web.Mvc;
+﻿//using System.Linq;
 //using MVCProject.Models;
-//using System.Data.Entity;
+//using System.Web.Mvc;
+
+//namespace MVCProject.Controllers
+//{
+//    public class PatientsController : Controller
+//    {
+//        // GET: Patients
+//        public ActionResult View()
+//        {
+//            PatientsRepository repository = new PatientsRepository();
+//            return View(repository.GetPatients());
+//        }
+
+//        //ADD
+//        public ActionResult Add()
+//        {
+//            return View(new Patient());
+//        }
+
+//        [HttpPost]
+//        public ActionResult Add(Patient patient)
+//        {
+//            if (ModelState.IsValid)
+//            {
+//                PatientsRepository repository = new PatientsRepository();
+//                repository.AddPatient(patient);
+//                return RedirectToAction("View");
+//            }
+//            return View(patient);
+//        }
+
+//        // GET: Delete
+//        public ActionResult Delete(int id)
+//        {
+//            PatientsRepository repository = new PatientsRepository();
+//            repository.RemovePatient(id);
+//            return RedirectToAction("View");
+//        }
+
+//        //Filter
+//        public ActionResult Filter(string searchString)
+//        {
+//            PatientsRepository repository = new PatientsRepository();
+
+//            var filteredPatients = repository.GetPatientsByName(searchString);
+//            return View("View", filteredPatients);
+//        }
+
+//        // Edit
+//        public ActionResult Edit(int id)
+//        {
+//            PatientsRepository repository = new PatientsRepository();
+
+//            var patient = repository.GetPatientById(id);
+//            if (patient == null)
+//            {
+//                return HttpNotFound();
+//            }
+//            return View(patient);
+//        }
+
+//        [HttpPost]
+//        [ValidateAntiForgeryToken]
+//        public ActionResult Edit(Patient patient)
+//        {
+//            PatientsRepository repository = new PatientsRepository();
+
+//            if (ModelState.IsValid)
+//            {
+//                repository.UpdatePatient(patient);
+//                return RedirectToAction("View");
+//            }
+//            return View(patient);
+//        }
+//    }
+//}
+
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Web.Mvc;
+using MVCProject.Models;
 
 namespace MVCProject.Controllers
 {
     public class PatientsController : Controller
     {
-        // GET: Patients
-        public ActionResult View()
+        private readonly HttpClient _client;
+
+        public PatientsController()
         {
-            PatientsRepository repository = new PatientsRepository();
-            return View(repository.GetPatients());
+            _client = new HttpClient();
+            _client.BaseAddress = new System.Uri("https://localhost:44362/");
         }
 
-        //ADD
-        public ActionResult Add()
+        public async Task<ActionResult> View(string searchString)
         {
-            return View(new Patient());
-        }
+            IEnumerable<Patient> patients = null;
+            HttpResponseMessage response = await _client.GetAsync("api/patients");
 
-        [HttpPost]
-        public ActionResult Add(Patient patient)
-        {
-            if (ModelState.IsValid)
+            if (response.IsSuccessStatusCode)
             {
-                PatientsRepository repository = new PatientsRepository();
-                repository.AddPatient(patient);
-                return RedirectToAction("View");
+                patients = await response.Content.ReadAsAsync<IEnumerable<Patient>>();
             }
-            return View(patient);
+            else
+            {
+                patients = new List<Patient>();
+                ModelState.AddModelError(string.Empty, "Server error.");
+            }
+
+            return View(patients);
         }
 
-        // GET: Delete
-        public ActionResult Delete(int id)
+        // DELETE
+        public async Task<ActionResult> Delete(int id)
         {
-            PatientsRepository repository = new PatientsRepository();
-            repository.RemovePatient(id);
+            HttpResponseMessage response = await _client.DeleteAsync($"api/patients/{id}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["Message"] = "Patient deleted successfully.";
+            }
+            else
+            {
+                TempData["Error"] = "Failed to delete patient.";
+            }
+
             return RedirectToAction("View");
         }
 
-        //Filter
-        public ActionResult Filter(string searchString)
+        // Filter
+        public async Task<ActionResult> Filter(string searchString)
         {
-            PatientsRepository repository = new PatientsRepository();
-
-            var filteredPatients = repository.GetPatientsByName(searchString);
-            return View("View", filteredPatients);
-        }
-
-        // Edit
-        public ActionResult Edit(int id)
-        {
-            PatientsRepository repository = new PatientsRepository();
-
-            var patient = repository.GetPatientById(id);
-            if (patient == null)
+            if (string.IsNullOrEmpty(searchString))
             {
-                return HttpNotFound();
-            }
-            return View(patient);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(Patient patient)
-        {
-            PatientsRepository repository = new PatientsRepository();
-
-            if (ModelState.IsValid)
-            {
-                repository.UpdatePatient(patient);
                 return RedirectToAction("View");
             }
-            return View(patient);
+
+            HttpResponseMessage response = await _client.GetAsync($"api/patients?name={searchString}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var patients = await response.Content.ReadAsAsync<IEnumerable<Patient>>();
+                return View("View", patients);
+            }
+            else
+            {
+                TempData["Error"] = "Failed to retrieve filtered patients.";
+                return RedirectToAction("View");
+            }
         }
 
+        // POST: Patients/Add
+        [HttpPost]
+        public async Task<ActionResult> Add(Patient patient)
+        {
+            HttpResponseMessage response = await _client.PostAsJsonAsync("api/patients", patient);
 
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["Message"] = "Patient added successfully.";
+                return RedirectToAction("View");
+            }
+            else
+            {
+                TempData["Error"] = "Failed to add patient.";
+                return View(patient);
+            }
+        }
 
-        //        // Добавление пациента
-        //        [HttpGet]
-        //        public ActionResult Create()
-        //        {
-        //            return View();
-        //        }
+        // GET: Patients/Edit/5
+        public async Task<ActionResult> Edit(int id)
+        {
+            HttpResponseMessage response = await _client.GetAsync($"api/patients/{id}");
 
-        //        [HttpPost]
-        //        public ActionResult Create(Patient patient)
-        //        {
-        //            if (ModelState.IsValid)
-        //            {
-        //                _context.Patients.Add(patient);
-        //                _context.SaveChanges();
-        //                return RedirectToAction("Index");
-        //            }
-        //            return View(patient);
-        //        }
+            if (response.IsSuccessStatusCode)
+            {
+                var patient = await response.Content.ReadAsAsync<Patient>();
+                return View(patient);
+            }
+            else
+            {
+                TempData["Error"] = "Failed to retrieve patient.";
+                return RedirectToAction("View");
+            }
+        }
 
-        //        // Редактирование пациента
-        //        [HttpGet]
-        //        public ActionResult Edit(int id)
-        //        {
-        //            var patient = _context.Patients.Find(id);
-        //            if (patient == null)
-        //                return HttpNotFound();
-        //            return View(patient);
-        //        }
+        // POST: Patients/Edit/5
+        [HttpPost]
+        public async Task<ActionResult> Edit(int id, Patient patient)
+        {
+            HttpResponseMessage response = await _client.PutAsJsonAsync($"api/patients/{id}", patient);
 
-        //        [HttpPost]
-        //        public ActionResult Edit(Patient patient)
-        //        {
-        //            if (ModelState.IsValid)
-        //            {
-        //                _context.Entry(patient).State = EntityState.Modified;
-        //                _context.SaveChanges();
-        //                return RedirectToAction("Index");
-        //            }
-        //            return View(patient);
-        //        }
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["Message"] = "Patient updated successfully.";
+                return RedirectToAction("View");
+            }
+            else
+            {
+                TempData["Error"] = "Failed to update patient.";
+                return View(patient);
+            }
+        }
 
-        //        // Удаление пациента
-        //        public ActionResult Delete(int id)
-        //        {
-        //            var patient = _context.Patients.Find(id);
-        //            if (patient == null)
-        //                return HttpNotFound();
-        //            _context.Patients.Remove(patient);
-        //            _context.SaveChanges();
-        //            return RedirectToAction("Index");
-        //        }
-
-        //        [HttpPost]
-        //        public ActionResult Filter(string searchString)
-        //        {
-        //            var filteredPatients = _context.Patients.Where(p => p.Name.Contains(searchString)).ToList();
-        //            return View("Index", filteredPatients);
-        //        }
-
-        //        protected override void Dispose(bool disposing)
-        //        {
-        //            if (disposing)
-        //            {
-        //                _context.Dispose();
-        //            }
-        //            base.Dispose(disposing);
-        //        }
     }
 }
