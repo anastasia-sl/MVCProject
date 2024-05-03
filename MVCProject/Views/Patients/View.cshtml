@@ -1,0 +1,44 @@
+﻿@using MVCProject.Models
+@model IEnumerable<MVCProject.Models.Patient>
+@{
+    ViewBag.Title = "View";
+    Layout = null;
+}
+
+<h2>View</h2>
+
+<div>
+    @Html.ActionLink("Add Patient", "Add")
+</div>
+
+@using (Html.BeginForm("Filter", "Patients", FormMethod.Post))
+{
+    <div class="form-group">
+        @Html.Label("Search by Name:")
+        @Html.TextBox("searchString", null, new { @class = "form-control" })
+    </div>
+    <button type="submit" class="btn btn-primary">Search</button>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Patient patient in Model)
+        {
+            <tr>
+                <td>@patient.Id</td>
+                <td>@patient.Name</td>
+                <td>
+                    @Html.ActionLink("Delete", "Delete", new { id = patient.Id }) |
+                    @Html.ActionLink("Edit", "Edit", new { id = patient.Id })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
